@@ -1,0 +1,22 @@
+{
+  "name": "wordtestappupdated",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "arraylist": "^0.1.0",
+    "aws-sdk": "^2.393.0",
+    "express": "^4.16.4",
+    "html-docx-js": "^0.3.1",
+    "probe-image-size": "^4.0.0",
+    "s3-streams": "^0.4.0",
+    "save": "^2.3.3",
+    "sharp": "^0.21.3",
+    "uuid": "^3.3.2"
+  }
+}
