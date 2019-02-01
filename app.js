@@ -136,7 +136,11 @@ app.get('/api/createWordDoc', function (req, res) {
         'test/image7.png',
         'test/image8.png',
         'test/image9.jpg',             
-        'test/image9.jpg',                   
+        'test/image9.jpg',        
+        'test/image0.jpg',
+        'test/image0.jpg',
+        'test/image0.jpg',
+        'test/image0.jpg',
     ]);
     
     // debug
