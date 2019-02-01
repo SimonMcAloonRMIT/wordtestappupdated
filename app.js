@@ -76,7 +76,7 @@ app.get('/api/createWordDoc', function (req, res) {
 
     // test images
     fileNameList.add([
-        'test/image0.jpg',
+        'test/image1.jpg',
         'test/image1.gif',
         'test/image2.jpg',
         'test/image3.jpg',        
