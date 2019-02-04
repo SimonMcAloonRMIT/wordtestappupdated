@@ -150,11 +150,11 @@ app.get('/api/createWordDoc', function (req, res) {
             var image = imageDetails[i];
             content += '<div><img width="' + image.width + '" height="' + image.height + '" src="data:image/png;base64,' + image.base64 + '" alt=""></div>';
             
-            console.log('image' + i);
+            //console.log('image' + i);
 
             if(i != 0 && i % 2 != 0 && i != imageDetails.length -1) {
                 content += '<br style="page-break-before: always; clear: both" />';    
-                console.log('PAGE BREAK');
+                //console.log('PAGE BREAK');
             }
         }
 
