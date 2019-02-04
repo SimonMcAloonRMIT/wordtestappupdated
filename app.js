@@ -93,7 +93,7 @@ app.get('/api/createWordDoc', function (req, res) {
 
     for(var i = 0; i < fileNameList.length; i++){
         promises.push(getObject(fileNameList.get(i)));
-        util.log('getting image - ' + fileNameList.get(i));
+        //util.log('getting image - ' + fileNameList.get(i));
     }
     
     Promise.all(promises)
