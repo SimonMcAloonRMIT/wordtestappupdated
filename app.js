@@ -28,7 +28,7 @@ app.get('/', function(req, res) {
 app.get('/api/createWordDoc', function (req, res) {
     // debug
     util.log('-----------------------');
-    util.log('createWordDoc requested');
+    util.log('NF Word Doc Download requested');
 
     var promises = [];
     var fileNameList = new ArrayList();
@@ -47,7 +47,7 @@ app.get('/api/createWordDoc', function (req, res) {
                         data.base64 = data.Body.toString('base64');
                         
                         // debug
-                        util.log(imageNmae + ' - image downloaded');
+                        //util.log(imageNmae + ' - image downloaded');
                         
                         var download = S3S.ReadStream(new S3(), {
                             Bucket: "smc-bucket1", Key: imageNmae
@@ -59,7 +59,7 @@ app.get('/api/createWordDoc', function (req, res) {
                         probe(download, function (err, result) {
 
                             // debug
-                            util.log(imageNmae + ' - image size date recieved');
+                            //util.log(imageNmae + ' - image size date recieved');
 
                             var newWidth = 230;
 
@@ -89,7 +89,7 @@ app.get('/api/createWordDoc', function (req, res) {
     ]);
     
     // debug
-    util.log(' ----- IMAGE DOWNLOAD STARTED...');
+    //util.log(' ----- IMAGE DOWNLOAD STARTED...');
 
     for(var i = 0; i < fileNameList.length; i++){
         promises.push(getObject(fileNameList.get(i)));
@@ -104,7 +104,7 @@ app.get('/api/createWordDoc', function (req, res) {
         }
 
         // debug
-        util.log(' ----- ALL IMAGES DOWNLOADED!');
+        util.log('All required images downloaded from s3');
         
         var content = '<style type="text/css">'+
         '@font-face {'+
