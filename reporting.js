@@ -5,18 +5,14 @@ const uuidv4 = require('uuid/v4');
 var AWS = require('aws-sdk');
 var S3 = require('aws-sdk').S3;
 var S3S = require('s3-streams');
-var ArrayList = require('arraylist');
 var probe = require('probe-image-size');  
 
 module.exports = function(app){
-    app.get('/api/createWordDoc', function (req, res) {
-        // debug
-        util.log('-----------------------');
-        util.log('NF Word Doc Download requested');
-    
+
+    app.get('/api/s3Test', function (req, res) {
         var promises = [];
-        var fileNameList = new ArrayList();
-        var imageDetails = new ArrayList();
+        var fileNameList = [];
+        var responseforNFImg = [];
         var s3 = new AWS.S3();
     
         var getObject = function(imageNmae) {
@@ -28,7 +24,85 @@ module.exports = function(app){
                             reject(error);
                         } else {
                             data.Filename = imageNmae;
-                            data.base64 = data.Body.toString('base64');
+                            data.nfImg = data.Body.toString('base64');
+                            
+                            // debug
+                            //logger.debug('S3 TEST --- ' + imageNmae + ' - image downloaded');                            
+
+                            // var download = S3S.ReadStream(new S3(), {
+                            //     Bucket: "smc-bucket1", Key: imageNmae
+                            // });
+        
+                            // get image size and calc resize
+                            //probe(download, function (err, result) {
+    
+                                // debug
+                                //logger.debug('S3 TEST --- ' + imageNmae + ' - image size date recieved');
+    
+                                //var newWidth = 230;
+    
+                                //data.width = newWidth;
+                                //data.height = calImageHeight(result.width, result.height, newWidth);
+    
+                                success(data);
+                            //});                        
+                        }
+                    }
+                )
+            });
+        }    
+    
+        // test images
+        fileNameList = [
+            'test/image1.gif',
+            'test/image1.gif'                    
+        ];
+        
+        // debug
+        //logger.debug(' ----- IMAGE DOWNLOAD STARTED...');
+    
+        for(var i = 0; i < fileNameList.length; i++){
+            promises.push(getObject(fileNameList[i]));
+            //logger.debug('S3 TEST --- getting image - ' + fileNameList.get(i));
+        }
+        
+        Promise.all(promises)
+        .then(function(results) {
+            for(var index in results) {
+                var data = results[index];
+                responseforNFImg.push(data);
+            }
+    
+            // debug
+            //logger.debug('S3 TEST --- All required images downloaded from s3');
+            
+            res.send(results);
+        })
+        .catch(function(err) {
+            util.log(err);
+        });
+    });
+
+    app.get('/api/createWordDoc', function (req, res) {
+        // debug
+        util.log('-----------------------');
+        util.log('NF Word Doc Download requested');
+    
+        var promises = [];
+        var fileNameList = [];
+        var responseforNFImg = [];
+        var s3 = new AWS.S3();
+    
+        var getObject = function(imageNmae) {
+            return new Promise(function(success, reject) {
+                s3.getObject(
+                    { Bucket: "smc-bucket1", Key: imageNmae }, 
+                    function (error, data) {
+                        if(error) {
+                            reject(error);
+                        } else {
+                            data.Filename = imageNmae;
+                            data.nfImg = data.Body.toString('base64');
                             
                             // debug
                             //util.log(imageNmae + ' - image downloaded');
@@ -59,7 +133,7 @@ module.exports = function(app){
         }    
     
         // test images
-        fileNameList.add([
+        fileNameList = [
             'test/image1.gif',
             'test/image1.gif',
             'test/image2.jpg',
@@ -70,13 +144,13 @@ module.exports = function(app){
             'test/image7.png',
             'test/image8.png',
             'test/image9.jpg'                     
-        ]);
+        ];
         
         // debug
         //util.log(' ----- IMAGE DOWNLOAD STARTED...');
     
         for(var i = 0; i < fileNameList.length; i++){
-            promises.push(getObject(fileNameList.get(i)));
+            promises.push(getObject(fileNameList[i]));
             //util.log('getting image - ' + fileNameList.get(i));
         }
         
@@ -84,7 +158,7 @@ module.exports = function(app){
         .then(function(results) {
             for(var index in results) {
                 var data = results[index];
-                imageDetails.add(data);
+                responseforNFImg.push(data);
             }
     
             // debug
@@ -130,13 +204,14 @@ module.exports = function(app){
     
     
     
-            for(var i = 0; i < imageDetails.length; i++) {
-                var image = imageDetails[i];
-                content += '<div><img width="' + image.width + '" height="' + image.height + '" src="data:image/png;base64,' + image.base64 + '" alt=""></div>';
-                
+            for(var j = 0; j < responseforNFImg.length; j++) {
+                //var image = imageDetails[i];
+                //content += '<div><img width="' + image.width + '" height="' + image.height + '" src="data:image/png;base64,' + image.base64 + '" alt=""></div>';
+                content += '<div><img width="' + responseforNFImg[j].width + '" height="' + responseforNFImg[j].height + '" src="data:image/png;base64,' + responseforNFImg[j].nfImg + '" alt=""></div>';
+
                 //console.log('image' + i);
     
-                if(i != 0 && i % 2 != 0 && i != imageDetails.length -1) {
+                if(j != 0 && j % 2 != 0 && j != responseforNFImg.length -1) {
                     content += '<br style="page-break-before: always; clear: both" />';    
                     //console.log('PAGE BREAK');
                 }
@@ -199,6 +274,110 @@ module.exports = function(app){
             util.log(err);
         });
     });
+
+    app.get('/api/createWordDocTesting', function (req, res) {
+        // debug
+        util.log('-----------------------');
+        util.log('NF Word Doc Download requested');
+    
+        var promises = [];
+        var fileNameList = [];
+        var responseforNFImg = [];
+        var s3 = new AWS.S3();
+    
+        var getObject = function(imageNmae) {
+            return new Promise(function(success, reject) {
+                s3.getObject(
+                    { Bucket: "smc-bucket1", Key: imageNmae }, 
+                    function (error, data) {
+                        if(error) {
+                            reject(error);
+                        } else {
+                            data.Filename = imageNmae;
+                            data.nfImg = data.Body.toString('base64');
+                            
+                            // debug
+                            util.log(imageNmae + ' - image downloaded');
+
+                            util.log(imageNmae + ' - downloading stream');
+                            
+                            var download = S3S.ReadStream(new S3(), {
+                                Bucket: "smc-bucket1", Key: imageNmae
+                            });
+    
+                            util.log(imageNmae + ' - stream downloaded');
+    
+                            // get image size and calc resize
+                            probe(download, function (err, result) {
+    
+                                // debug
+                                util.log(imageNmae + ' - image size date recieved');
+    
+                                var newWidth = 230;
+    
+                                data.width = newWidth;
+                                data.height = calImageHeight(result.width, result.height, newWidth);
+    
+                                success(data);
+                            });                        
+                        }
+                    }
+                )
+            });
+        }    
+    
+        // test images
+        fileNameList = [
+            'test/image1.gif',
+            'test/image1.gif',
+            'test/image2.jpg',
+            'test/image3.jpg',        
+            'test/image4.jpg',
+            'test/image5.jpg',
+            'test/image6.jpg',
+            'test/image7.png',
+            'test/image8.png',
+            'test/image9.jpg'                     
+        ];
+        
+        // debug
+        //util.log(' ----- IMAGE DOWNLOAD STARTED...');
+    
+        for(var i = 0; i < fileNameList.length; i++){
+            promises.push(getObject(fileNameList[i]));
+            //util.log('getting image - ' + fileNameList.get(i));
+        }
+        
+        Promise.all(promises)
+        .then(function(results) {
+            for(var index in results) {
+                var data = results[index];
+                responseforNFImg.push(data);
+            }
+
+            var details = [];
+
+            for(var i = 0; i < responseforNFImg.length; i++) {
+                var thisItem = responseforNFImg[i];
+                var newItem = {
+                    Filename: thisItem.Filename,
+                    nfImg: thisItem.nfImg.length,
+                    Width: thisItem.width,
+                    Height: thisItem.height
+                };
+
+                details.push(newItem);
+            }
+    
+            res.send(details);
+    
+        })
+        .catch(function(err) {
+            util.log(err);
+        });
+    });
+
+
 
     function calImageHeight(width, height, newWidth) {
         var aspectRatio = width / height;
